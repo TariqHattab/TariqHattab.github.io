@@ -628,17 +628,26 @@ footer .fine{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 2
     }
     return { data: data, aspect: w / h, cols: 0 };
   }
+  /* Measure the real ink box (including diacritics like tanween above the letters) before drawing */
   function textCanvas(lines){
-    var probe = mkCanvas(10, 10).getContext('2d'), width = 0, height = 0;
-    lines.forEach(function(l){ probe.font = l.font; l.w = probe.measureText(l.text).width; width = Math.max(width, l.w); height += l.size * l.lh; });
-    var pad = 20, c = mkCanvas(Math.ceil(width + pad * 2), Math.ceil(height + pad * 2)), ctx = c.getContext('2d');
+    var probe = mkCanvas(10, 10).getContext('2d'), width = 0, height = 0, gap = 18;
+    lines.forEach(function(l){
+      probe.font = l.font; probe.direction = l.rtl ? 'rtl' : 'ltr'; probe.textBaseline = 'alphabetic';
+      var m = probe.measureText(l.text);
+      l.asc = Math.ceil(m.actualBoundingBoxAscent || l.size * 0.9) + 6;
+      l.desc = Math.ceil(m.actualBoundingBoxDescent || l.size * 0.3) + 6;
+      l.w = Math.ceil((m.actualBoundingBoxLeft || 0) + (m.actualBoundingBoxRight || m.width)) + 12;
+      width = Math.max(width, l.w); height += l.asc + l.desc;
+    });
+    height += gap * (lines.length - 1);
+    var pad = 24, c = mkCanvas(Math.ceil(width + pad * 2), Math.ceil(height + pad * 2)), ctx = c.getContext('2d');
     var g = ctx.createLinearGradient(0, 0, c.width, 0);
     g.addColorStop(0, '#5ED3AB'); g.addColorStop(.55, '#8FE6C8'); g.addColorStop(1, '#3E9BC4');
     var y = pad;
     lines.forEach(function(l){
-      ctx.font = l.font; ctx.textBaseline = 'top'; ctx.fillStyle = l.color || g;
+      ctx.font = l.font; ctx.textBaseline = 'alphabetic'; ctx.fillStyle = l.color || g;
       ctx.direction = l.rtl ? 'rtl' : 'ltr'; ctx.textAlign = 'center';
-      ctx.fillText(l.text, c.width / 2, y); y += l.size * l.lh;
+      ctx.fillText(l.text, c.width / 2, y + l.asc); y += l.asc + l.desc + gap;
     });
     return c;
   }
@@ -834,7 +843,7 @@ footer .fine{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 2
         maskFormation(textCanvas([
           { text: 'مرحباً', font: '500 190px "Readex Pro"', size: 190, lh: 1.3, rtl: true },
           { text: 'Let’s talk', font: '600 76px "Public Sans"', size: 76, lh: 1.2, color: '#DDE9E3' }
-        ]), 0.6)
+        ]), 0.22)
       ];
       formations = list.map(upload);
       cloud = upload(cloudFormation());
