@@ -22,7 +22,8 @@
 <script>(function(){try{var d=document.documentElement,h=location.hash.slice(1),s=null;try{s=localStorage.getItem('lang')}catch(e){}var l=(h==='ar'||h==='en')?h:(s==='ar'||s==='en')?s:((navigator.language||'').toLowerCase().indexOf('ar')===0?'ar':'en');if(l==='ar'){d.lang='ar';d.dir='rtl';d.classList.add('i18n-pending');setTimeout(function(){d.classList.remove('i18n-pending')},1500);}}catch(e){}})();</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Aref+Ruqaa:wght@700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Mrs+Saint+Delafield&family=Noto+Naskh+Arabic:wght@500;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Mrs+Saint+Delafield&family=Noto+Naskh+Arabic:wght@500;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gulzar&text=%D8%B7%D8%A7%D8%B1%D9%82%20%D8%AD%D8%B7%D8%A7%D8%A8&display=swap">
 <style>
 /* "The Request": the page is a request file moving through review.
    Light paper, one official green, stamp-ink red only for stamps. */
@@ -545,7 +546,7 @@ a.ch-v:hover{color:var(--green)}
 :root[lang=ar] .sig-k{font:500 12px/1.4 var(--f-ar)}
 .sig-ink{height:86px;display:flex;align-items:flex-end;color:var(--green);padding-inline:8px 18px;clip-path:inset(-30px -40px)}
 .sig-ink .en{font:400 64px/1 "Mrs Saint Delafield",cursive;transform:translateY(12px)}
-.sig-ink .ar{font:700 46px/1 "Aref Ruqaa",var(--f-naskh),serif;transform:translateY(-14px)}
+.sig-ink .ar{font:400 44px/1 "Gulzar",var(--f-naskh),serif;transform:translateY(-14px)}
 :root[lang=ar] .sig-ink .en,:root[lang=en] .sig-ink .ar{display:none}
 .js .sig-ink{clip-path:inset(-30px 100% -30px -40px)}
 :root[dir=rtl].js .sig-ink{clip-path:inset(-30px -40px -30px 100%)}
