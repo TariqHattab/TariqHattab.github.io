@@ -112,16 +112,13 @@ svg.defs{position:absolute;width:0;height:0;overflow:hidden}
 @media (max-width:420px){.brand-ref{display:none}.nav .btn-green{margin-inline-start:2px}}
 
 /* ---------- Phone status bar (the request, minimised) ---------- */
-.sbar{position:fixed;inset-inline:0;top:var(--hdr);z-index:55;height:46px;background:rgba(255,255,255,.97);border-bottom:1px solid var(--line);box-shadow:0 10px 24px -20px rgba(17,32,26,.5);transform:translateY(-104%);visibility:hidden;transition:transform .38s var(--ease),visibility 0s linear .38s}
-.sbar.show{transform:none;visibility:visible;transition:transform .38s var(--ease),visibility 0s}
+.sbar{position:absolute;inset-inline:0;top:calc(100% + 1px);height:46px;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 10px 24px -20px rgba(17,32,26,.5);opacity:0;visibility:hidden;transition:opacity .28s ease,visibility 0s linear .28s}
+.sbar.show{opacity:1;visibility:visible;transition:opacity .28s ease,visibility 0s}
 .sb-in{display:flex;align-items:center;gap:10px;height:43px}
 .sb-n{flex:none;font:600 12px/1 var(--f-mono);color:#fff;background:var(--green);border-radius:6px;padding:6px 7px;letter-spacing:.02em}
 .sb-name{flex:1;min-width:0;font:500 14px/1.2 var(--f-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sb-name.flash{color:var(--red)}
 .sb-st{flex:none;display:flex;align-items:center;gap:6px;font:600 13px/1 var(--f-mono);color:var(--red)}
 .sb-st svg{width:22px;height:22px}
-.sb-st.hit svg{animation:sbhit .5s var(--ease)}
-@keyframes sbhit{0%{transform:scale(1.9) rotate(-18deg);opacity:.3}60%{transform:scale(.9) rotate(2deg);opacity:1}100%{transform:none}}
 .sb-track{display:flex;gap:3px;height:3px;padding-inline:var(--gut)}
 .sb-track i{flex:1;background:var(--line);border-radius:2px;transition:background-color .3s ease}
 .sb-track i.done{background:var(--green)}
@@ -288,6 +285,8 @@ svg.defs{position:absolute;width:0;height:0;overflow:hidden}
 .stamp{position:absolute;left:50%;top:50%;--tx:-50%;--ty:-50%;--r:-6deg;transform:translate(var(--tx),var(--ty)) rotate(var(--r));color:var(--red);-webkit-mask-image:var(--grain);mask-image:var(--grain);-webkit-mask-size:144px 144px;mask-size:144px 144px;pointer-events:none;visibility:hidden;white-space:nowrap;direction:ltr;user-select:none;-webkit-user-select:none}
 .stamp.green{color:var(--green)}
 .stamp.on{visibility:visible}
+.stamp.prep{visibility:visible;will-change:transform,opacity}
+.stamp.prep:not(.on){opacity:0}
 @media (prefers-reduced-motion:no-preference){.stamp.on.anim{animation:thump .6s both}}
 @keyframes thump{
   0%{opacity:.3;transform:translate(var(--tx),var(--ty)) rotate(calc(var(--r) - 14deg)) scale(2.3);animation-timing-function:cubic-bezier(.6,0,.9,.4)}
@@ -613,16 +612,16 @@ footer{padding:28px 0 calc(36px + env(safe-area-inset-bottom))}
       <a class="btn btn-green btn-sm" href="#contact" data-ar="تواصل">Contact</a>
     </nav>
   </div>
+  <div class="sbar" aria-hidden="true">
+    <div class="wrap sb-in">
+      <span class="sb-n js-sbn">1/9</span>
+      <span class="sb-name js-sbname">Submitted</span>
+      <span class="sb-st"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M9 3.5h6l-1 7h-4l-1-7Z"/><path d="M4.5 13.5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3h-15v-3Z"/><path d="M4 19.5h16"/></svg><b class="js-sbcount">0</b></span>
+    </div>
+    <div class="sb-track"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  </div>
 </header>
 
-<div class="sbar" aria-hidden="true">
-  <div class="wrap sb-in">
-    <span class="sb-n js-sbn">1/9</span>
-    <span class="sb-name js-sbname">Submitted</span>
-    <span class="sb-st"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M9 3.5h6l-1 7h-4l-1-7Z"/><path d="M4.5 13.5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3h-15v-3Z"/><path d="M4 19.5h16"/></svg><b class="js-sbcount">0</b></span>
-  </div>
-  <div class="sb-track"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-</div>
 
 <main id="main">
  <div class="wrap layout">
@@ -1022,10 +1021,10 @@ footer{padding:28px 0 calc(36px + env(safe-area-inset-bottom))}
   var lang = 'en', langListeners = [];
   var T = {
     en: { copied:'Copied', press:'Press ⌘C to copy', done:'Done', review:'In review', pending:'Pending', under:'Under review', issued:'Decision issued',
-          stage:function(k){ return 'Stage ' + k + ' of 9'; }, reviewOf:'Review: ', stamped:'Stamped: ',
+          stage:function(k){ return 'Stage ' + k + ' of 9'; }, reviewOf:'Review: ',
           words:{ received:'RECEIVED', reviewed:'REVIEWED', verified:'VERIFIED', approved:'APPROVED' } },
     ar: { copied:'تم النسخ', press:'اضغط ⌘C للنسخ', done:'تم', review:'قيد المراجعة', pending:'بالانتظار', under:'قيد المراجعة', issued:'صدر القرار',
-          stage:function(k){ return 'المرحلة ' + digits(k) + ' من ٩'; }, reviewOf:'مراجعة: ', stamped:'خُتم: ',
+          stage:function(k){ return 'المرحلة ' + digits(k) + ' من ٩'; }, reviewOf:'مراجعة: ',
           words:{ received:'وارد', reviewed:'تمت المراجعة', verified:'تم التحقق', approved:'معتمد' } }
   };
   function digits(n){ return lang === 'ar' ? String(n).replace(/[0-9]/g, function(d){ return '٠١٢٣٤٥٦٧٨٩'[d]; }) : String(n); }
@@ -1217,9 +1216,9 @@ footer{padding:28px 0 calc(36px + env(safe-area-inset-bottom))}
   var stageEls = [].slice.call(document.querySelectorAll('[data-stage]')).sort(function(a, b){ return a.dataset.stage - b.dataset.stage; });
   var fileSheet = document.querySelector('.file-sheet'), fileEl = document.getElementById('file'), letterEl = document.querySelector('.letter');
   var routeEl = document.querySelector('.route'), pbar = document.querySelector('.ff .pbar');
-  var sbar = document.querySelector('.sbar'), sbN = document.querySelector('.js-sbn'), sbName = document.querySelector('.js-sbname'), sbCount = document.querySelector('.js-sbcount'), sbSt = document.querySelector('.sb-st');
+  var sbar = document.querySelector('.sbar'), sbN = document.querySelector('.js-sbn'), sbName = document.querySelector('.js-sbname'), sbCount = document.querySelector('.js-sbcount');
   var sbSegs = [].slice.call(document.querySelectorAll('.sb-track i')), miniSegs = [].slice.call(document.querySelectorAll('.mini-bar i'));
-  var awarded = [], count = 0, cur = 0, queue = [], busy = false, flashTimer;
+  var awarded = [], count = 0, cur = 0, queue = [], busy = false;
   var desktop = window.matchMedia('(min-width: 1100px)');
 
   function stageName(k, l){
@@ -1242,7 +1241,7 @@ footer{padding:28px 0 calc(36px + env(safe-area-inset-bottom))}
     document.querySelector('.js-mini-name').textContent = T[lang].stage(cur) + ' · ' + stageName(cur, lang);
     document.querySelector('.js-mini-n').textContent = count + '/9 ✓';
     sbN.textContent = cur + '/9';
-    if (!flashTimer) sbName.textContent = awarded[9] && cur === 9 ? T[lang].issued + ' ✓' : stageName(cur, lang);
+    sbName.textContent = awarded[9] && cur === 9 ? T[lang].issued + ' ✓' : stageName(cur, lang);
     sbCount.textContent = count;
     sbSegs.forEach(function(s, i){ s.className = awarded[i + 1] ? 'done' : (i + 1 === cur ? 'cur' : ''); });
     miniSegs.forEach(function(s, i){ s.className = awarded[i + 1] ? 'done' : (i + 1 === cur ? 'cur' : ''); });
@@ -1250,18 +1249,19 @@ footer{padding:28px 0 calc(36px + env(safe-area-inset-bottom))}
   langListeners.push(function(){ if (cur) paintRoute(); });
 
   function inView(el, frac){ var r = el.getBoundingClientRect(); return r.bottom > 0 && r.top < window.innerHeight * (frac || 1); }
-  function bump(el){ if (!el || reduce) return; el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); }
+  function replay(el, cls){ el.classList.remove(cls); requestAnimationFrame(function(){ requestAnimationFrame(function(){ el.classList.add(cls); }); }); }
+  function bump(el){ if (!el || reduce) return; replay(el, 'bump'); }
   function press(stamp, animate){
     stamp.classList.add('on');
-    if (animate && !reduce) { stamp.classList.remove('anim'); void stamp.offsetWidth; stamp.classList.add('anim'); }
+    if (animate && !reduce) stamp.classList.add('anim');
   }
   function land(k){
     var b = big[k], animate = !reduce && inView(b.host);
     press(b.el, animate);
     b.host.classList.add('stamped');
     if (animate) setTimeout(function(){
-      if (b.strip) { b.host.classList.remove('hit'); void b.host.offsetWidth; b.host.classList.add('hit'); bump(b.strip); }
-      if (k === 1) bump(fileSheet);
+      if (b.strip) { replay(b.host, 'hit'); if (desktop.matches) bump(b.strip); }
+      if (k === 1 && desktop.matches) bump(fileSheet);
     }, 330);
     if (k === 9) { var sig = document.querySelector('.sig'); if (sig) sig.classList.add('signed'); }
     // the file's route row receives its own small stamp a beat later
@@ -1269,13 +1269,6 @@ footer{padding:28px 0 calc(36px + env(safe-area-inset-bottom))}
       press(mini[k], !reduce && desktop.matches && inView(fileEl));
       if (k !== 1 && desktop.matches && inView(fileEl)) setTimeout(function(){ bump(fileSheet); }, 330);
       paintRoute();
-      if (!desktop.matches && k > 1) {
-        if (!reduce) { sbSt.classList.remove('hit'); void sbSt.offsetWidth; sbSt.classList.add('hit'); }
-        clearTimeout(flashTimer);
-        sbName.textContent = '✓ ' + T[lang].stamped + STAGES[k].name[lang];
-        sbName.classList.add('flash');
-        flashTimer = setTimeout(function(){ flashTimer = null; sbName.classList.remove('flash'); paintRoute(); }, 1700);
-      }
     }, animate ? 240 : 0);
   }
   function pump(){
@@ -1308,9 +1301,12 @@ footer{padding:28px 0 calc(36px + env(safe-area-inset-bottom))}
     var maxY = document.documentElement.scrollHeight - vh;
     if (window.scrollY >= maxY - 4) c = 9;
     if (c !== cur) { cur = c; paintRoute(); }
+    for (var q = 1; q <= 9; q++) {
+      if (!reduce && !big[q].prep && big[q].host.getBoundingClientRect().top < vh * 2.5) { big[q].prep = true; big[q].el.classList.add('prep'); }
+    }
     if (started) {
       // stage 1 lands when the file is on screen; the others when their sign-off strip is
-      if (!awarded[1] && inView(big[1].host, 0.88)) award(1);
+      if (!awarded[1] && (inView(big[1].host, 0.88) || cur > 1)) award(1);
       for (var k = 2; k <= 9; k++) {
         if (awarded[k]) continue;
         if (inView(big[k].host, 0.84) || cur > k || (k === 9 && window.scrollY >= maxY - 4)) award(k);
@@ -1329,6 +1325,15 @@ footer{padding:28px 0 calc(36px + env(safe-area-inset-bottom))}
   function onScroll(){ if (!ticking) { ticking = true; requestAnimationFrame(update); } }
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onScroll);
+
+  window.addEventListener('load', function(){
+    var imgs = [].slice.call(document.querySelectorAll('main img[src]'));
+    (function next(){
+      var im = imgs.shift();
+      if (!im) return;
+      (im.decode ? im.decode() : Promise.resolve()).catch(function(){}).then(function(){ setTimeout(next, 80); });
+    })();
+  });
 
   setLang(pickInitialLang(), false);
   // Reduced motion: the file arrives fully processed and nothing moves
