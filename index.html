@@ -60,7 +60,7 @@
 
 *,*::before,*::after{box-sizing:border-box}
 html{overflow-anchor:none;-webkit-text-size-adjust:100%;text-size-adjust:100%;scroll-padding-top:calc(var(--hdr) + 28px)}
-body{overflow-anchor:none;margin:0;background:var(--desk);color:var(--ink);font:400 16px/1.62 var(--f-body);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:clip}
+body{overflow-anchor:none;margin:0;padding-top:var(--hdr);background:var(--desk);color:var(--ink);font:400 16px/1.62 var(--f-body);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;overflow-x:clip}
 :root[lang=ar] body{font-size:16.5px;line-height:1.85}
 /* Arabic never gets negative tracking or case transforms */
 :lang(ar){letter-spacing:0 !important;text-transform:none !important}
@@ -95,7 +95,7 @@ svg.defs{position:absolute;width:0;height:0;overflow:hidden}
 .lang-btn:hover{border-color:var(--green);color:var(--green)}
 
 /* ---------- Header ---------- */
-.top{position:sticky;top:0;z-index:60;height:var(--hdr);background:#F5F7F5;border-bottom:1px solid var(--line)}
+.top{position:fixed;inset-inline:0;top:0;z-index:60;height:var(--hdr);background:#F5F7F5;border-bottom:1px solid var(--line);will-change:transform}
 .top-in{display:flex;align-items:center;justify-content:space-between;gap:12px;height:100%}
 .brand{display:flex;align-items:center;gap:11px;text-decoration:none;min-width:0}
 .seal-mini{flex:none;width:36px;height:36px;border-radius:50%;background:var(--green);color:#fff;display:grid;place-items:center;font:700 19px/1 var(--f-naskh);box-shadow:inset 0 0 0 3px var(--green),inset 0 0 0 4.2px rgba(255,255,255,.6)}
@@ -201,7 +201,7 @@ svg.defs{position:absolute;width:0;height:0;overflow:hidden}
 .howto-ic svg{width:15px;height:15px}
 @media (prefers-reduced-motion:no-preference){
   .howto-ic svg{animation:nudge 2.4s var(--ease) infinite}
-  .hero > .rise{animation:rise .95s var(--ease) both;animation-delay:calc(var(--i,0) * 75ms + 80ms)}
+  .hero > .rise{animation:rise .95s var(--ease) backwards;animation-delay:calc(var(--i,0) * 75ms + 80ms)}
 }
 @keyframes nudge{0%,55%,100%{transform:none}25%{transform:translateY(3px)}}
 @keyframes rise{from{opacity:.3;transform:translateY(18px)}}
@@ -287,7 +287,7 @@ svg.defs{position:absolute;width:0;height:0;overflow:hidden}
 .stamp.on{visibility:visible}
 .stamp.prep{visibility:visible;will-change:transform,opacity}
 .stamp.prep:not(.on){opacity:0}
-@media (prefers-reduced-motion:no-preference){.stamp.on.anim{animation:thump .6s both}}
+@media (prefers-reduced-motion:no-preference){.stamp.on.anim{animation:thump .6s backwards}}
 @keyframes thump{
   0%{opacity:.3;transform:translate(var(--tx),var(--ty)) rotate(calc(var(--r) - 14deg)) scale(2.3);animation-timing-function:cubic-bezier(.6,0,.9,.4)}
   56%{opacity:1;transform:translate(var(--tx),var(--ty)) rotate(calc(var(--r) + 1deg)) scale(.94);animation-timing-function:cubic-bezier(.2,.7,.3,1)}
@@ -1253,7 +1253,10 @@ footer{padding:28px 0 calc(36px + env(safe-area-inset-bottom))}
   function bump(el){ if (!el || reduce) return; replay(el, 'bump'); }
   function press(stamp, animate){
     stamp.classList.add('on');
-    if (animate && !reduce) stamp.classList.add('anim');
+    if (animate && !reduce) {
+      stamp.addEventListener('animationend', function(){ stamp.classList.remove('prep'); }, { once: true });
+      stamp.classList.add('anim');
+    } else stamp.classList.remove('prep');
   }
   function land(k){
     var b = big[k], animate = !reduce && inView(b.host);
