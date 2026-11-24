@@ -111,20 +111,33 @@ svg.defs{position:absolute;width:0;height:0;overflow:hidden}
 @media (max-width:860px){.nav .nl{display:none}}
 @media (max-width:420px){.brand-ref{display:none}.nav .btn-green{margin-inline-start:2px}}
 
-/* ---------- Phone status bar (the request, minimised) ---------- */
-.sbar{position:absolute;inset-inline:0;top:calc(100% + 1px);height:46px;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 10px 24px -20px rgba(17,32,26,.5);opacity:0;visibility:hidden;transition:opacity .28s ease,visibility 0s linear .28s}
-.sbar.show{opacity:1;visibility:visible;transition:opacity .28s ease,visibility 0s}
-.sb-in{display:flex;align-items:center;gap:10px;height:43px}
-.sb-n{flex:none;font:600 12px/1 var(--f-mono);color:#fff;background:var(--green);border-radius:6px;padding:6px 7px;letter-spacing:.02em}
-.sb-name{flex:1;min-width:0;font:500 14px/1.2 var(--f-body);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sb-st{flex:none;display:flex;align-items:center;gap:6px;font:600 13px/1 var(--f-mono);color:var(--red)}
-.sb-st svg{width:22px;height:22px}
-.sb-track{display:flex;gap:3px;height:3px;padding-inline:var(--gut)}
-.sb-track i{flex:1;background:var(--line);border-radius:2px;transition:background-color .3s ease}
-.sb-track i.done{background:var(--green)}
-.sb-track i.cur{background:linear-gradient(90deg,var(--green) 50%,var(--line) 50%)}
-:root[dir=rtl] .sb-track i.cur{background:linear-gradient(270deg,var(--green) 50%,var(--line) 50%)}
-@media (min-width:1100px){.sbar{display:none}}
+/* ---------- Phones: past the request file, the header turns into the request's slim status bar ----------
+   Only transform and opacity change, so the phone's scrolling thread animates it without the page */
+.brand-sw{display:block;min-width:0}
+.cstage{display:none}
+.sb-track{display:none}
+@media (max-width:1099px){
+  .top{transition:transform .32s var(--ease),box-shadow .32s ease}
+  .top-in{transition:transform .32s var(--ease)}
+  .brand{flex:1}
+  .brand-sw{display:grid;flex:1}
+  .brand-sw > *{grid-area:1 / 1;align-self:center;min-width:0;transition:opacity .22s ease,visibility 0s linear .22s}
+  .cstage{display:flex;align-items:center;gap:9px;opacity:0;visibility:hidden}
+  .sb-n{flex:none;font:600 12px/1 var(--f-mono);color:#fff;background:var(--green);border-radius:6px;padding:6px 7px;letter-spacing:.02em}
+  .sb-name{min-width:0;font:600 14.5px/1.25 var(--f-body);color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .sb-track{display:flex;gap:3px;position:absolute;inset-inline:0;bottom:0;height:3px;padding-inline:var(--gut);opacity:0;transition:opacity .22s ease}
+  .sb-track i{flex:1;background:var(--line);border-radius:2px;transition:background-color .3s ease}
+  .sb-track i.done{background:var(--green)}
+  .sb-track i.cur{background:linear-gradient(90deg,var(--green) 50%,var(--line) 50%)}
+  :root[dir=rtl] .sb-track i.cur{background:linear-gradient(270deg,var(--green) 50%,var(--line) 50%)}
+  /* compact: 12px of the header slide up out of view (64 -> 52px) and the content re-centres in what is left */
+  .top.compact{transform:translateY(-12px);box-shadow:0 10px 24px -20px rgba(17,32,26,.5)}
+  .top.compact .top-in{transform:translateY(6px)}
+  .top.compact .brand-t{opacity:0;visibility:hidden}
+  .top.compact .cstage{opacity:1;visibility:visible;transition:opacity .22s ease .06s,visibility 0s}
+  .top.compact .lang-btn{display:none}
+  .top.compact .sb-track{opacity:1}
+}
 
 /* ---------- Layout: content column + the request file ---------- */
 .layout{display:grid;grid-template-columns:minmax(0,1fr)}
@@ -603,7 +616,7 @@ footer{padding:28px 0 calc(36px + env(safe-area-inset-bottom))}
 
 <header class="top">
   <div class="wrap top-in">
-    <a class="brand" href="#top" aria-label="Tariq Hattab" data-ar-label="طارق حطاب"><span class="seal-mini" lang="ar" aria-hidden="true"><span>ط</span></span><span class="brand-t"><span class="brand-name" data-ar="طارق حطاب">Tariq Hattab</span><span class="brand-ref js-ref" dir="ltr">REQ-2026-0148</span></span></a>
+    <a class="brand" href="#top" aria-label="Tariq Hattab" data-ar-label="طارق حطاب"><span class="seal-mini" lang="ar" aria-hidden="true"><span>ط</span></span><span class="brand-sw"><span class="brand-t"><span class="brand-name" data-ar="طارق حطاب">Tariq Hattab</span><span class="brand-ref js-ref" dir="ltr">REQ-2026-0148</span></span><span class="cstage" aria-hidden="true"><span class="sb-n js-sbn">1/9</span><span class="sb-name js-sbname">Submitted</span></span></span></a>
     <nav class="nav" aria-label="Sections" data-ar-label="الأقسام">
       <a class="nl" href="#work" data-ar="الأعمال">Work</a>
       <a class="nl" href="#integrations" data-ar="التكاملات">Integrations</a>
@@ -612,14 +625,7 @@ footer{padding:28px 0 calc(36px + env(safe-area-inset-bottom))}
       <a class="btn btn-green btn-sm" href="#contact" data-ar="تواصل">Contact</a>
     </nav>
   </div>
-  <div class="sbar" aria-hidden="true">
-    <div class="wrap sb-in">
-      <span class="sb-n js-sbn">1/9</span>
-      <span class="sb-name js-sbname">Submitted</span>
-      <span class="sb-st"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M9 3.5h6l-1 7h-4l-1-7Z"/><path d="M4.5 13.5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3h-15v-3Z"/><path d="M4 19.5h16"/></svg><b class="js-sbcount">0</b></span>
-    </div>
-    <div class="sb-track"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
-  </div>
+  <div class="sb-track" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
 </header>
 
 
@@ -1216,7 +1222,7 @@ footer{padding:28px 0 calc(36px + env(safe-area-inset-bottom))}
   var stageEls = [].slice.call(document.querySelectorAll('[data-stage]')).sort(function(a, b){ return a.dataset.stage - b.dataset.stage; });
   var fileSheet = document.querySelector('.file-sheet'), fileEl = document.getElementById('file'), letterEl = document.querySelector('.letter');
   var routeEl = document.querySelector('.route'), pbar = document.querySelector('.ff .pbar');
-  var sbar = document.querySelector('.sbar'), sbN = document.querySelector('.js-sbn'), sbName = document.querySelector('.js-sbname'), sbCount = document.querySelector('.js-sbcount');
+  var topEl = document.querySelector('.top'), sbN = document.querySelector('.js-sbn'), sbName = document.querySelector('.js-sbname');
   var sbSegs = [].slice.call(document.querySelectorAll('.sb-track i')), miniSegs = [].slice.call(document.querySelectorAll('.mini-bar i'));
   var awarded = [], count = 0, cur = 0, queue = [], busy = false;
   var desktop = window.matchMedia('(min-width: 1100px)');
@@ -1241,8 +1247,7 @@ footer{padding:28px 0 calc(36px + env(safe-area-inset-bottom))}
     document.querySelector('.js-mini-name').textContent = T[lang].stage(cur) + ' · ' + stageName(cur, lang);
     document.querySelector('.js-mini-n').textContent = count + '/9 ✓';
     sbN.textContent = cur + '/9';
-    sbName.textContent = awarded[9] && cur === 9 ? T[lang].issued + ' ✓' : stageName(cur, lang);
-    sbCount.textContent = count;
+    sbName.textContent = awarded[9] && cur === 9 ? T[lang].issued + ' ✓' : rows[cur - 1].querySelector('.r-l').textContent;
     sbSegs.forEach(function(s, i){ s.className = awarded[i + 1] ? 'done' : (i + 1 === cur ? 'cur' : ''); });
     miniSegs.forEach(function(s, i){ s.className = awarded[i + 1] ? 'done' : (i + 1 === cur ? 'cur' : ''); });
   }
@@ -1321,9 +1326,9 @@ footer{padding:28px 0 calc(36px + env(safe-area-inset-bottom))}
     for (var m = reveals.length - 1; m >= 0; m--) {
       if (reveals[m].getBoundingClientRect().top < vh * 0.94) { reveals[m].classList.remove('pre'); reveals.splice(m, 1); }
     }
-    // phones: the bar follows the request, then steps aside so the issued letter fills the screen
+    // phones: past the request file the header becomes its slim status bar, then steps back so the issued letter has the stage
     var fr = fileEl.getBoundingClientRect(), lt = letterEl.getBoundingClientRect().top;
-    sbar.classList.toggle('show', !desktop.matches && fr.bottom < 70 && lt > 130);
+    topEl.classList.toggle('compact', !desktop.matches && fr.bottom < 70 && lt > 130);
   }
   function onScroll(){ if (!ticking) { ticking = true; requestAnimationFrame(update); } }
   window.addEventListener('scroll', onScroll, { passive: true });
