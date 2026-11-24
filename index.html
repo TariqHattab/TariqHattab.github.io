@@ -1259,12 +1259,13 @@ footer{padding:28px 0 calc(36px + env(safe-area-inset-bottom))}
     } else stamp.classList.remove('prep');
   }
   function land(k){
-    var b = big[k], animate = !reduce && inView(b.host);
+    // phones: the stamp just appears; while the thump and ring ran, Android Chrome let the pinned header scroll away
+    var b = big[k], animate = !reduce && desktop.matches && inView(b.host);
     press(b.el, animate);
     b.host.classList.add('stamped');
     if (animate) setTimeout(function(){
-      if (b.strip) { replay(b.host, 'hit'); if (desktop.matches) bump(b.strip); }
-      if (k === 1 && desktop.matches) bump(fileSheet);
+      if (b.strip) { replay(b.host, 'hit'); bump(b.strip); }
+      if (k === 1) bump(fileSheet);
     }, 330);
     if (k === 9) { var sig = document.querySelector('.sig'); if (sig) sig.classList.add('signed'); }
     // the file's route row receives its own small stamp a beat later
@@ -1305,7 +1306,7 @@ footer{padding:28px 0 calc(36px + env(safe-area-inset-bottom))}
     if (window.scrollY >= maxY - 4) c = 9;
     if (c !== cur) { cur = c; paintRoute(); }
     for (var q = 1; q <= 9; q++) {
-      if (!reduce && !big[q].prep && big[q].host.getBoundingClientRect().top < vh * 2.5) { big[q].prep = true; big[q].el.classList.add('prep'); }
+      if (!reduce && desktop.matches && !big[q].prep && big[q].host.getBoundingClientRect().top < vh * 2.5) { big[q].prep = true; big[q].el.classList.add('prep'); }
     }
     if (started) {
       // stage 1 lands when the file is on screen; the others when their sign-off strip is
