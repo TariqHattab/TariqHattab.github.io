@@ -124,10 +124,9 @@ svg.defs{position:absolute;width:0;height:0;overflow:hidden}
   .sb-n{flex:none;font:600 12px/1 var(--f-mono);color:#fff;background:var(--green);border-radius:6px;padding:6px 7px;letter-spacing:.02em}
   .sb-name{min-width:0;font:600 14.5px/1.25 var(--f-body);color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .sb-track{display:flex;gap:3px;position:absolute;inset-inline:0;bottom:0;height:3px;padding-inline:var(--gut);visibility:hidden}
-  .sb-track i{flex:1;background:var(--line);border-radius:2px}
-  .sb-track i.done{background:var(--green)}
-  .sb-track i.cur{background:linear-gradient(90deg,var(--green) 50%,var(--line) 50%)}
-  :root[dir=rtl] .sb-track i.cur{background:linear-gradient(270deg,var(--green) 50%,var(--line) 50%)}
+  .sb-track i{flex:1;position:relative;overflow:hidden;background:var(--line);border-radius:2px}
+  .sb-track i::before{content:"";position:absolute;inset:0;background:var(--green);transform:scaleX(var(--f,0));transform-origin:0 50%}
+  :root[dir=rtl] .sb-track i::before{transform-origin:100% 50%}
   .top.compact .brand-t{visibility:hidden}
   .top.compact .cstage{visibility:visible}
   .top.compact .lang-btn{display:none}
@@ -1243,7 +1242,6 @@ footer{padding:28px 0 calc(36px + env(safe-area-inset-bottom))}
     document.querySelector('.js-mini-n').textContent = count + '/9 ✓';
     sbN.textContent = cur + '/9';
     sbName.textContent = awarded[9] && cur === 9 ? T[lang].issued + ' ✓' : rows[cur - 1].querySelector('.r-l').textContent;
-    sbSegs.forEach(function(s, i){ s.className = awarded[i + 1] ? 'done' : (i + 1 === cur ? 'cur' : ''); });
     miniSegs.forEach(function(s, i){ s.className = awarded[i + 1] ? 'done' : (i + 1 === cur ? 'cur' : ''); });
   }
   langListeners.push(function(){ if (cur) paintRoute(); });
@@ -1298,11 +1296,19 @@ footer{padding:28px 0 calc(36px + env(safe-area-inset-bottom))}
   var ticking = false, started = false;
   function update(){
     ticking = false;
-    var vh = window.innerHeight, line = vh * 0.42, c = 1;
+    var vh = window.innerHeight, line = vh * 0.42, c = 1, tops = [];
     for (var i = 0; i < stageEls.length; i++) {
-      if (stageEls[i].getBoundingClientRect().top <= line) c = +stageEls[i].dataset.stage;
+      tops[i] = stageEls[i].getBoundingClientRect().top;
+      if (tops[i] <= line) c = +stageEls[i].dataset.stage;
     }
     var maxY = document.documentElement.scrollHeight - vh;
+    // phones: each segment of the header's progress line fills as you read through its stage (the last one by the end of the page)
+    if (!desktop.matches) for (var g = 0; g < sbSegs.length; g++) {
+      var read = line - tops[g], span = g < tops.length - 1 ? tops[g + 1] - tops[g] : read + Math.max(0, maxY - window.scrollY);
+      var f = span > 0 ? Math.min(1, Math.max(0, read / span)) : 0;
+      f = Math.round(f * 1000) / 1000;
+      if (sbSegs[g]._f !== f) { sbSegs[g]._f = f; sbSegs[g].style.setProperty('--f', f); }
+    }
     if (window.scrollY >= maxY - 4) c = 9;
     if (c !== cur) { cur = c; paintRoute(); }
     for (var q = 1; q <= 9; q++) {
